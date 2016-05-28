@@ -1,0 +1,52 @@
+<div ng-include="'app/navbar/top.html'"></div>
+
+<div class="container-fluid">
+
+
+<h1 class="page-title">เช็คจ่ายวันนี้  (<span ng-if="items">{{items.length}} รายการ </span>)</h1>
+
+<div class="row">
+<div class="col-xs-12 col-sm-12 col-md-12">
+
+
+
+  <div class="table table-responsive">
+ <table class="table table-condensed">
+ <tr>
+<th>ID</th>
+<th>ไซต์งาน/สาขา</th>
+<th>วันที่จ่าย</th>
+<th>เลขที่เช็ค</th>
+<th>เช็คสั่งจ่าย</th>
+<th>จำนวนเงิน</th>
+<th>วันที่ทำรายการ</th>
+<th></th>
+<th></th>
+</tr>
+<tr ng-repeat="row in items | orderBy:'-cheque_date' ">
+<td><a href="#{{profileId}}/cheque/{{row.id}}">{{row.id}}</a></td>
+<td>{{row.site_name}}</td>
+<td>{{row.cheque_date|date:'dd/MM/yyyy'}}</td>
+<td><a href="#{{profileId}}/cheque/{{row.id}}">{{row.cheque_no}}</a></td>
+<td>{{row.cheque_name}}</td>
+<td>{{row.cheque_price|currency:'฿'}}</td>
+<td>{{row.created_at|date:'short' }}</td>
+<td>
+<span ng-if="row.cheque_status=='Y' " class="label label-success">จ่ยเงินแล้ว</span>
+<span ng-if="row.cheque_status=='N' " class="label label-warning">ยังไม่จ่าย</span>
+</td>
+<td class="btn-group">
+<a href="app/cheque/export/{{row.bank_code}}.php?id={{row.id}}"  title="พิมพ์" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-print"></i></a>
+</td>
+</tr>
+  </table>
+  </div>
+
+
+
+
+</div>
+</div>
+
+
+</div>

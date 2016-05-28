@@ -1,0 +1,313 @@
+<div ng-include="'app/navbar/top.html'"></div>
+<div class="container-fluid">
+  <h1 class="page-title">เช็คทั้งหมด ({{totalItems}} รายการ)</h1>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <form class="form-inline" role="search" method="get" action="">
+        <div class="well input-group">
+          <div class="form-group">
+
+            <select class="form-control" name="is_cancal"
+            ng-model="is_cancel"
+            >
+            <option value="">--สถานะใช้งาน--</option>
+            <option value="0">ใช้งาน</option>
+            <option value="1">ยกเลิก</option>
+            </select>
+            <input type="text" placeholder="เลขที่เช็ค" ng-model="q" class="form-control">
+
+            <input type="text" placeholder="เช็คสั่งจ่าย" ng-model="cheque_name" class="form-control">
+            <input type="button" value="Search" class="btn btn-primary" ng-click="loadCheque(1)">
+          </div>
+          <a href="#{{profileId}}/cheques/add" class="btn btn-link"><i class="fa fa-plus"></i> เพิ่มเช็ค</a>
+          <a href="javascript:void(0)" class="btn btn-defaul" ng-click="loadCheque(1)"><i class="fa fa-refresh"></i> รีโหลด</a>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+
+
+
+
+      <div class="table table-responsive">
+
+
+        <table class="table table-condensed table-hover">
+          <tr>
+            <th>ลำดับ</th>
+            <th>วันที่จ่าย</th>
+            <th>เลขที่เช็ค</th>
+            <th>จ่ายเพื่อ</th>
+            <th>เช็คสั่งจ่าย</th>
+            <th>จำนวนเงิน</th>
+            <th>วันที่ทำรายการ</th>
+            <th>สร้างโดย</th>
+            <th>สถานะจ่าย</th>
+            <th with="120"></th>
+          </tr>
+          <tr ng-repeat="row in items | orderBy:'-id' "
+          ng-class="row.is_cancel?'danger text-danger':''">
+            <td><a href="javascript:void(0)"
+            ng-click="viewCheque(row)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="ดูรายละเอียด">{{$index+1}}</a>
+          </td>
+            <td>{{row.cheque_date|date:'dd/MM/yyyy'}}</td>
+            <td><a href="javascript:void(0)"
+            ng-click="viewCheque(row)"
+            title="{{row.cheque_no}}"
+            class="badge btn-block"><strong>{{row.cheque_no}}</strong></a></td>
+            <td><a href="javascript:void(0)"
+              ng-click="viewCheque(row)"
+              title="{{row.cheque_for}}">{{row.cheque_for|limitTo:50}}</a>
+            </td>
+            <td>{{row.cheque_name}}</td>
+            <td>{{row.cheque_price|currency:'฿'}}</td>
+            <td><small>{{row.created_at|date:'short' }}</small></td>
+            <td><small>{{row.created_name}}</small></td>
+            <td>
+            <div ng-click="changStatus(row)" class="btn">
+                <span ng-if="row.cheque_status=='Y' " class="label label-success">จ่ายเงินแล้ว</span>
+                <span ng-if="row.cheque_status=='N' " class="label label-warning">ยังไม่จ่าย</span>
+            </div>
+            </td>
+            <td nowrap>
+              <!-- button view -->
+              <a
+              tooltip-placement="top-left"
+              uib-tooltip="ดูรายละเอียด"
+              href="javascript:void(0)"  ng-click="viewCheque(row)" title="ดูรายละเอียด"
+              class="btn btn-sm btn-default" target="_blank">
+              <i class="fa fa-search"></i></a>
+                <!-- button print -->
+              <a
+              tooltip-placement="top"
+              uib-tooltip="พิมพ์เช็ค PDF"
+              href="app/cheque/export/{{row.bank_code}}.php?id={{row.id}}"
+              title="พิมพ์" class="btn btn-sm btn-info" target="_blank">
+              <i class="fa fa-print"></i></a>
+                <!-- button edit -->
+              <a href="#{{row.id_site_profile}}/cheque/edit/{{row.id}}"
+              tooltip-placement="top"
+              uib-tooltip="แก้ไขเช็ค"
+              title="แก้ไข"
+              ng-show="row.cheque_status=='N'&& row.is_cancel==0" class="btn btn-sm btn-default">
+              <i class="fa fa-pencil"></i></a>
+                <!-- button cancel -->
+             <a href="javascript:void(0)"
+             tooltip-placement="top-right"
+             uib-tooltip="ยกเลิกเช็ค"
+             ng-show="row.cheque_status=='N'&& row.is_cancel==0"
+             ng-click="cancelCheque(row)" title="ยกเลิกเช็ค"
+             class="btn btn-sm btn-danger" target="_blank">
+             <i class="fa fa-ban"></i></a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div>ทั้งหมด:{{totalItems}} รายการ / หน้าที่ = {{currentPage}}</div>
+      <uib-pagination ng-change="pageChanged()" boundary-links="true" max-size="maxSize" total-items="totalItems" ng-model="currentPage" rotate="false" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+      </uib-pagination>
+
+
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+
+<!-- View Cheque -->
+<script type="text/ng-template"  id="ModalViewCheque.html">
+    <div class="modal-header">
+  <h3 class="modal-title">
+  <div class="pull-left">รายละเอียด: <span>{{items.cheque_no}}</div>
+  <span ng-if="items.is_cancel==1" class="pull-right label label-danger">
+    <i class="fa fa-ban"></i> ยกเลิกแล้ว</span>
+  </h3>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="panel panel-default">
+      <div class="panel-heading">
+      <div class="pull-left">
+      <h3 class="panel-title">เลขที่เช็ค :  {{items.cheque_no}}
+
+      </h3>
+      </div>
+      <div class="pull-right">สถานะ :
+      <span ng-if="items.cheque_status=='Y' " class="label label-success">จ่ยเงินแล้ว</span>
+      <span ng-if="items.cheque_status=='N' " class="label label-danger">ยังไม่จ่าย</span>
+      </div>
+      <div class="clearfix"></div>
+      </div>
+      <div class="panel-body">
+      <div class="panel-content">
+      <table class="table table-striped">
+      <tr><td>ID</td><td>{{items.id}}</td></tr>
+      <tr><td>โครงการ</td><td>{{items.site_name}}</td></tr>
+      <tr><td>สั่งจ่าย</td><td>{{items.cheque_name}}</td></tr>
+      <tr><td>วันที่เช็ค</td><td>{{items.cheque_date | date:'dd/MM/yyyy'}}</td></tr>
+      <tr><td>AC</td>
+      <td>
+      <div ng-if="items.cheque_ac=='Y' ">เข้าบัญชี</div>
+      <div ng-if="items.cheque_ac=='N' ">ไม่เข้าบัญชี</div>
+      </td>
+      </tr>
+      <tr><td>จำนวนเงิน</td><td>{{items.cheque_price|currency:'฿'}}</td></tr>
+      <tr><td>ธนาคาร</td><td>{{items.bank_name}} ({{items.bank_branch}})
+      <span class="l">เลขที่บัญชี่ {{items.bank_no}}</span>
+      </td></tr>
+      <tr><td>วันที่ทำรายการ</td><td>{{items.created_at | date:'dd/MM/yyyy'}} -  {{items.created_name}}</td></tr>
+      <tr><td>แก้ไขล่าสุด</td><td>{{items.updated_at | date}} -  {{items.updated_name}}</td></tr>
+      </table>
+      </div>
+      </div></div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6">
+      <div class="table-responsive" ng-if="records.length>0">
+      <table class="table table-bordered table-condensed">
+      <tr>
+      <th></th>
+      <th>จ่ายเพื่อ</th>
+      <th>ราคา</th>
+      </tr>
+      <tr ng-repeat="record in records | orderBy:type:reverse">
+      <td>{{$index+1}}</td>
+      <td>{{record.title}}</td>
+      <td>{{record.price | currency : '฿'}}</td>
+      </tr>
+      <tr>
+      <td colspan="2" align="center">Total</td>
+      <td><strong>{{totalsDetail().price | currency : '฿'}}</strong></td>
+      </tr>
+      </table>
+      </div>
+      <p>
+        <a href="app/cheque/export/{{items.bank_code}}.php?id={{items.id}}"
+         class="btn btn-info" target="_blank"><i class="fa fa-print"></i> Print</a>
+       </p>
+       <div ng-show="items.is_cancel" class="well">
+         <label class="control-label">หมายเหตุการยกเลิก:</label>
+        <div ng-bind="items.cancel_note"></div>
+       </div>
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" type="button" ng-click="cancel()">ปิดหน้าต่าง</button>
+    </div>
+</script>
+
+
+
+
+<!-- cancel cheque -->
+<script type="text/ng-template"  id="ModalCancelCheque.html">
+  <form name="formcancel" method="post">
+    <div class="modal-header">
+        <h3 class="modal-title">ยกเลิกเช็ค: <span>{{items.cheque_no}} - {{items.cheque_name}}</h3>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="panel panel-default">
+      <div class="panel-heading">
+      <div class="pull-left">
+      <h3 class="panel-title">เลขที่เช็ค :  {{items.cheque_no}}</h3>
+      </div>
+      <div class="pull-right">สถานะ :
+      <span ng-if="items.cheque_status=='Y' " class="label label-success">จ่ยเงินแล้ว</span>
+      <span ng-if="items.cheque_status=='N' " class="label label-danger">ยังไม่จ่าย</span>
+      </div>
+      <div class="clearfix"></div>
+      </div>
+      <div class="panel-body">
+      <div class="panel-content">
+      <table class="table table-striped">
+      <tr><td>ID</td><td>{{items.id}}</td></tr>
+      <tr><td>โครงการ</td><td>{{items.site_name}}</td></tr>
+      <tr><td>สั่งจ่าย</td><td>{{items.cheque_name}}</td></tr>
+      <tr><td>วันที่เช็ค</td><td>{{items.cheque_date | date:'dd/MM/yyyy'}}</td></tr>
+      <tr><td>AC</td>
+      <td>
+      <div ng-if="items.cheque_ac=='Y' ">เข้าบัญชี</div>
+      <div ng-if="items.cheque_ac=='N' ">ไม่เข้าบัญชี</div>
+      </td>
+      </tr>
+      <tr><td>จำนวนเงิน</td><td>{{items.cheque_price|currency:'฿'}}</td></tr>
+      <tr><td>ธนาคาร</td><td>{{items.bank_name}} ({{items.bank_branch}})
+      <span class="l">เลขที่บัญชี่ {{items.bank_no}}</span>
+      </td></tr>
+      <tr><td>วันที่ทำรายการ</td><td>{{items.created_at | date:'dd/MM/yyyy'}} -  {{items.created_name}}</td></tr>
+      <tr><td>แก้ไขล่าสุด</td><td>{{items.updated_at | date}} -  {{items.updated_name}}</td></tr>
+      </table>
+      </div>
+      </div></div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6">
+      <div class="table-responsive" ng-if="records.length>0">
+      <table class="table table-bordered table-condensed">
+      <tr>
+      <th></th>
+      <th>จ่ายเพื่อ</th>
+      <th>ราคา</th>
+      </tr>
+      <tr ng-repeat="record in records | orderBy:type:reverse">
+      <td>{{$index+1}}</td>
+      <td>{{record.title}}</td>
+      <td>{{record.price | currency : '฿'}}</td>
+      </tr>
+      <tr>
+      <td colspan="2" align="center">Total</td>
+      <td><strong>{{totalsDetail().price | currency : '฿'}}</strong></td>
+      </tr>
+      </table>
+      </div>
+
+      <!--cancel note-->
+        <div class="form-group" ng-class="{ 'has-error': formcancel.is_cancel.$invalid }">
+          <label  class="control-label">
+          <input type="checkbox"
+          name="is_cancel"
+          ng-model="items.is_cancel"
+          value="1"
+          required
+          >
+          ต้องการยกเลิกเช็คเลขที่ {{items.cheque_code}}</label>
+        </div>
+      <div class="form-group" ng-class="{ 'has-error': formcancel.cancel_note.$invalid }">
+      <label class="control-label">หมายเหตุยกเลิก</label>
+      <textarea name="cancel_note" ng-model="items.cancel_note"
+      id="cancel-note"
+      class="form-control"
+      placeholder="หมายเหตุการยกเลิก"
+      rows="5"
+      required
+      ></textarea>
+      <span ng-show="formcancel.cancel_note.$dirty && formcancel.cancel_note.$error.required"
+      class="text-danger"
+      >โปรดระบุหมายเหตุยกเลิก</span>
+       </div>
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-disabled="formcancel.$invalid"
+        type="button" ng-click="ok(items)">บันทึกข้อมูล</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</form>
+</script>

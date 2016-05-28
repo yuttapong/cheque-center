@@ -1,0 +1,74 @@
+<div ng-include="'app/navbar/top.html'"></div>
+<div class="container-fluid">
+
+<h1 class="page-title">รายงาน</h1>
+<div class="row">
+<div class="col-sm-3">
+<div class="well">
+<form name="formReport" class="form">
+<div class="form-group ">
+<label class="control-label">ตั้งแต่วันที่</label>
+<input type="text" ng-model="data.date_start" class="form-control datepicker"
+placeholder="yyyy-mm-dd"
+>
+</div>
+<div class="form-group ">
+<label class="control-label">ตั้งแต่วันที่</label>
+<input type="text" ng-model="data.date_end" class="form-control datepicker"
+placeholder="yyyy-mm-dd"
+>
+</div>
+<p>
+<button type="button" class="btn btn-primary" ng-click="getReport(data)">ค้นหา</button>
+<button type="button" class="btn btn-default" ng-click="getReportAll()">แสดงทั้งหมด</button>
+</p>
+<div ng-show="dateError" class="alert alert-danger">โปรดเลือกช่วงเวลา</div>
+</form>
+</div>
+</div>
+
+<div class="col-sm-9">
+<div ng-if="data">
+<div class="alert alert-default" ng-show="data.date_start">
+<strong>
+ตั้งแต่ :
+<div ng-class="data.date_start?'btn btn-default':'' ">{{data.date_start | date : 'dd/MM/yyyy'}}</div>
+ถึงวันที่ :
+<div  ng-class="data.date_end?'btn btn-default':'' ">{{data.date_end | date : 'dd/MM/yyyy'}}</div>
+</strong>
+</div>
+</div>
+		<!-- table -->
+<table class="table table-bordered table-hover">
+<tr>
+<th>{{siteProfile.profileName}}</th>
+<th>จำนวน</th>
+<th>มูลค่า</th>
+</tr>
+<tr>
+<td>เช็คทั้งหมด</td>
+<td><span class="badge">{{report.all_qty}}</span></td>
+<td>{{report.all_price | currency:'฿'}}</td>
+</tr>
+<tr class="success">
+<td>เช็คจ่ายแล้ว</td>
+<td><span class="badge">{{report.success_qty}}</span></td>
+<td>{{report.success_price | currency:'฿'}}</td>
+</tr>
+<tr class="danger">
+<td>เช็คถึงกำหนดจ่าย(ยังไม่ได้จ่าย)</td>
+<td><span class="badge">{{report.unsuccess_qty}}</span></td>
+<td>{{report.unsuccess_price | currency:'฿'}}</td>
+</tr>
+<tr>
+<td>เช็คยังไม่ถึงกำหนดจ่าย</td>
+<td><span class="badge">{{report.pending_qty}}</span></td>
+<td>{{report.pending_price | currency:'฿'}}</td>
+</tr>
+</table>
+
+<!-- end table -->
+	</div>
+</div>
+
+</div>

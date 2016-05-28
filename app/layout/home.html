@@ -1,0 +1,52 @@
+<div ng-include="'app/navbar/top.html'"></div>
+
+<div class="container-fluid">
+
+<!-- ////////// notification ////////// -->
+<div class="alert alert-info">
+ <ul class="list-unstyled">
+ <li><i class="fa fa-rss"></i> เพื่อการแสดงผลที่ที่ดี โปรดใช้ Browser : Google Crome , Mozilla Firefox เท่านั้น</li>
+ <li><span class="text-danger"><i class="fa fa-rss"></i> ไม่แนะนำ Internet Explorer (IE) </span></li>
+ </ul>
+</div>
+
+
+<!-- ////////// profile ////////// -->
+<div class="panel panel-default">
+<div class="panel-heading">
+<h4 class="panel-title"><i class="fa fa-institution fa-2x"></i>เลือกบริษัท/ไซต์งาน</h4>
+</div>
+<div class="panel-body">
+<div class="panel-content">
+<div class="row" align="center">
+<div ng-repeat="row in sites" ng-if="row.id_site> 0" class="col-xs-6 col-sm-4 col-md-3">
+<a href="#{{row.id}}/cheques"><i class="fa fa-institution fa-2x"></i>
+  <div>{{ row.name }}</div>
+ </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ///////////setting ///////// -->
+<div class="panel panel-default">
+<div class="panel-heading">
+<h4 class="panel-title"><i class="fa fa-cog fa-2x"></i> Setting (สำหรับผู้ดูแลระบบ)</h4>
+</div>
+<div class="panel-body">
+<div class="panel-content">
+<div class="row" align="center">
+<div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="menu in menus">
+<a href="{{menu.url}}"><i class="{{menu.icon}}"></i>
+  <div>{{menu.name}}</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>

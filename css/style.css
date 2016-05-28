@@ -1,0 +1,57 @@
+
+.navbar{
+  border-radius:0px;
+  -moz-border-radius:0px;
+  -webkit-border-radius:0px;
+}
+.page-title{
+    font-weight: bold;
+    font-size: 20px;
+    color:#333;
+}
+.page-title span{
+    color:#337ab7;
+}
+
+#navbar-cheque.navbar-default .navbar-brand {
+    color: rgba(240, 240, 240, 1);
+}
+#navbar-cheque.navbar-default {
+    font-size: 15px;
+    background-color: rgba(0, 150, 158, 1);
+    border-width: 1px;
+    border-radius: 4px;
+}
+#navbar-cheque.navbar-default .navbar-nav>li>a {
+    color: rgba(250, 237, 237, 1);
+    background-color: rgba(248, 248, 248, 0);
+}
+#navbar-cheque.navbar-default .navbar-nav>li>a:hover,
+#navbar-cheque.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(255, 226, 61, 1);
+    background-color: rgba(248, 248, 248, 0);
+}
+#navbar-cheque.navbar-default .navbar-nav>.active>a,
+#navbar-cheque.navbar-default .navbar-nav>.active>a:hover,
+#navbar-cheque.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(85, 85, 85, 1);
+    background-color: rgba(231, 231, 231, 1);
+}
+#navbar-cheque.navbar-default .navbar-toggle {
+    border-color: #ddd;
+}
+#navbar-cheque.navbar-default .navbar-toggle:hover,
+#navbar-cheque.navbar-default .navbar-toggle:focus {
+    background-color: #ddd;
+}
+#navbar-cheque.navbar-default .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+#navbar-cheque.navbar-default .navbar-toggle:hover .icon-bar,
+#navbar-cheque.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #00969e;
+}
+
+body,td{
+    font-size: 15px;
+}

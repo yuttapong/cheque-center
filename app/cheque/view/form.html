@@ -1,0 +1,308 @@
+<div ng-include="'app/navbar/top.html'"></div>
+
+<div class="container-fluid">
+<h1  class="page-title">
+  <div ng-if="id_cheque">แก้ไขเช็ค : <span class="text-info">{{dataform.cheque_no}}</span>
+({{dataform.cheque_name}})
+  </div>
+
+  <div ng-if="!id_cheque">เพิ่มเช็ค</div>
+</h1>
+
+<link rel="stylesheet" type="text/css" href="app/cheque/view/autocomplete.css">
+<form class="form-horizontal"
+name="formCheque"
+accept=""
+method="post"
+ng-submit="saveChuque(dataform,record)">
+
+
+<div class="row">
+<div class="col-md-6"><a href="#{{profileId}}/cheques"  class="btn btn-default"><i class="fa fa-arrow-left"></i> Back</a></div>
+<div class="col-md-6">
+<div class="pull-right">
+<input type="button" value="showDebug" ng-click="showDebug(dataform)" class="hidden">
+<input type="submit" class="btn btn-primary" value="บันทึก" ng-hide="id_cheque"
+>
+
+<span ng-show="id_cheque">
+<input type="submit" ng-hide="dataform.is_cancel==1 || dataform.cheque_status=='Y'" class="btn btn-primary" value="อัพเดทข้อมูล"
+>
+<a href="app/cheque/export/{{dataform.bank_code}}.php?id={{dataform.id}}"
+class="btn btn-info" target="_blank">
+<i class="fa fa-print"></i> Print</a>
+<a href="#{{profileId}}/cheque/{{dataform.id}}"
+class="btn btn-default">
+<i class="fa fa-search"></i> ดูรายละเอียด</a>
+</span>
+<input type="button" class="btn btn-default"  ng-click="resetForm()" value="Reset">
+</div>
+
+</div>
+</div>
+<br>
+<div class="row">
+<div class="col-md-6">
+
+
+
+<div class="panel panel-default">
+<div class="panel-heading">
+<div class="panel-title">
+<div class="pull-left">
+  <div ng-if="id_cheque">
+  ID: {{id_cheque}}
+  </div>
+
+</div>
+<div class="pull-right">สถานะ :
+<span ng-if="dataform.cheque_status=='Y' " class="label label-success">จ่ยเงินแล้ว</span>
+<span ng-if="dataform.cheque_status=='N' " class="label label-danger">ยังไม่จ่าย</span>
+</div>
+<div class="clearfix"></div>
+</div>
+</div>
+<div class="panel-body">
+<div class="panel-content">
+
+
+<!--prifile-->
+  <div ng-if="id_cheque">
+  <div class="form-group">
+ <label class="control-label col-md-3">ผู้ทำรายการ </label>
+ <div class="col-md-9"><input ng-model="dataform.created_name" class="form-control" readonly></div>
+ </div>
+</div>
+<div ng-if="!id_cheque">
+  <div class="form-group">
+ <label class="control-label col-md-3">ผู้ทำรายการ </label>
+ <div class="col-md-9"><input ng-model="dataform.created_name" ng-value="userprofile.firstname" class="form-control" readonly=""></div>
+ </div>
+ </div>
+ <!--end profile-->
+
+
+
+
+<!-- Select Bank -->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="id_bank">ธนาคาร</label>
+  <div class="col-md-9">
+  <div class="input-group">
+    <select
+    id="bank_id"
+    name="bank_id"
+    class="form-control"
+    ng-model="dropdownBank"
+    >
+    <option ng-repeat="bank in banks">{{bank.id_bank}}) {{bank.code}}
+    : {{bank.name}} - {{bank.branch}} - {{bank.number}}</option>
+    </select>
+    <span class="input-group-btn">
+<button class="btn btn-default" type="button" ng-click="setBank(dropdownBank)">เลือก</button>
+</span>
+    </div>
+  </div>
+</div>
+
+<!-- Text Bank Name-->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="textinput">ข้อมูลธนาคาร</label>
+  <div class="col-md-9">
+
+<div class="row form-group">
+  <div class="col-sm-3">
+   <input type="text" class="form-control" ng-model="dataform.bank_id"  placeholder="Bank ID"
+   required ng-change="setBank(dataform.bank_id)">
+   </div>
+     <div class="col-sm-3">
+   <input type="text" class="form-control" ng-model="dataform.bank_code"  placeholder="Bank Code" required>
+  </div>
+  <div class="col-sm-6">
+    <input id="bank_name" name="bank_name" type="text"  ng-model="dataform.bank_name"
+  ng-min="2"
+  placeholder="ชื่อธนาคาร"
+  class="form-control input-md" required>
+  </div>
+  </div>
+
+
+<div class="row form-group">
+  <div class="col-sm-6">
+    <input id="bank_branch" name="bank_branch" ng-model="dataform.bank_branch" type="text" placeholder="สาขา" class="form-control input-md">
+  </div>
+    <div class="col-sm-6">
+    <input id="bank_no" name="bank_no" type="text" ng-model="dataform.bank_no" placeholder="เลขที่บัญชี" class="form-control input-md">
+  </div>
+  </div>
+
+
+
+  <span class="text-danger" ng-show="formCheque.$error.required && ! formCheque.bank_name.$pristine">ระบุชื่อธนาคาร</span>
+  <span class="text-danger"  ng-show="formCheque.$error.bank_name">ชื่อธนาคารไม่ถูกต้อง</span>
+
+  </div>
+</div>
+
+
+
+<!-- Text cheque no-->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="cheque_no">เลขที่เช็ค</label>
+  <div class="col-md-9">
+  <input id="cheque_no" name="cheque_no"
+  ng-model="dataform.cheque_no" type="text" placeholder="เลขที่เช็ค" class="form-control input-md" required>
+      <span class="text-danger"
+      ng-show="formCheque.$error.required && ! formCheque.cheque_no.$pristine">
+      ระบุเลขที่เช็ค</span>
+  </div>
+</div>
+
+<!-- Text cheque date-->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="cheque_no">วันที่จ่าย</label>
+  <div class="col-md-9">
+<input class="form-control datepicker" ng-model="dataform.cheque_date" type="text" placeholder="yyyy-mm-dd">
+  <small class="help-block">วันที่-เดือน-ค.ศ. dd-mm-yyyy เช่น 2016-12-31</small>
+  </div>
+</div>
+
+
+<!-- Text Cheque Name Pay-->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="cheque_name_pay">เช็คสั่งจ่าย</label>
+  <div class="col-md-9">
+<autocomplete ng-model="dataform.cheque_name" data="groupChequeName" ng-keyup="getGroupChequeName(dataform)"
+attr-placeholder="สั่งจ่าย..."
+attr-input-class="form-control"
+ ></autocomplete>
+       <div align="right">
+        <a class="btn btn-link" href="javascript:void(0)" ng-click="setPayCash()">คลิกที่นี่ เพื่อจ่ายเงินสด!</a>
+      </div>
+  </div>
+
+
+
+</div>
+
+<!-- Text cheque AC -->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="cheque_ac"></label>
+  <div class="col-md-9">
+  <input type="radio" ng-model="dataform.cheque_ac" value="Y"> เข้าบัญชี
+  <input type="radio" ng-model="dataform.cheque_ac" value="N"> ไม่เข้าบัญชี
+
+  </div>
+</div>
+
+
+
+
+
+
+</div>
+
+</div> <!-- end if id_cheque -->
+</div> <!-- end panel -->
+</div>
+
+<div class="col-md-6">
+
+<div ng-include="'app/cheque/view/form-items.html'"></div>
+
+
+<!-- Text input-->
+<div class="form-group">
+<label class="col-md-4 control-label" for="cheque_price">จำนวนเงิน(ก่อนหักภาษี)</label>
+<div class="col-md-8">
+<input id="cheque_price"
+name="cheque_price"
+ng-model="dataform.cheque_price"
+type="number"
+placeholder="จำนวนเงิน"
+class="form-control input-md"
+required
+ng-change="calPrice(dataform)"
+ng-blur="calPrice(dataform)"
+ ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+ step="0.01"
+>
+
+<span class="text-danger"
+ng-show="formCheque.$error.required && ! formCheque.cheque_price.$pristine">
+ระบุจำนวนเงินก่อนหัก</span>
+</div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+<label class="col-md-4 control-label" for="cheque_price">รวมยอดเงิน</label>
+<div class="col-md-8">
+<input id="amount"  name="amount"
+ng-model="dataform.amount"
+type="number"
+placeholder="รวมยอดเงิน"
+class="form-control input-md"
+ ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+ step="0.01"
+required
+>
+<span class="text-danger"
+ng-show="formCheque.$error.required && ! formCheque.cheque_price.$pristine">
+รวมยอดเงิน</span>
+</div>
+</div>
+
+
+<hr>
+<!-- Text cheque status-->
+<div class="form-group">
+  <label class="col-md-3 control-label" for="cheque_status">สถานะเช็ค</label>
+  <div class="col-md-9">
+
+   <span ng-if="dataform.cheque_status=='Y'" class="text-success">ชำระเงินแล้ว</span>
+   <span ng-if="dataform.cheque_status!='Y'" class="text-warning">ยังไม่ได้จ่าย</span>
+  </div>
+</div>
+
+
+
+
+
+
+</div>
+</div>
+</form>
+
+
+
+
+<div class="list-group hidden">
+  <div class="list-group-item" ng-repeat="data in alldata track by $index">
+  <div>ID : {{data.id}}</div>
+   <div class="text-success">{{data.created_at | date:'medium'}}</div>
+    <p>bank_id : {{data.bank_id}} - {{data.bank_code}} - {{data.bank_name}} ({{data.bank_branch}})
+เลขที่บัญชี : {{data.bank_no}}
+    </p>
+    <p>
+    เช็คสั่งจ่าย : {{data.cheque_name}}
+    เลขที่เช็ค : {{data.cheque_no}}
+    วันที่จ่าย : {{data.cheque_date}}
+    เช็คมูลค่า : {{data.cheque_price|currency:'฿'}}
+    </p>
+    <ul>
+      <li ng-repeat="rec in data.records" ng-if="rec.include">{{rec.title}} - {{rec.price | currency}}</li>
+    </ul>
+  </div>
+</div>
+
+
+</div>
+
+
+<style type="text/css">
+  #ModalPOCtrl .list-po td{
+    font-size: 13px;
+  }
+
+</style>

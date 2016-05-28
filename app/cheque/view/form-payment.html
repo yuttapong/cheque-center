@@ -1,0 +1,122 @@
+
+<!-///////////////////////// Payment  ////////////////////////->    
+<div ng-controller="ModalPaymentDocCtrl">
+<script type="text/ng-template" id="modelSearchPayment.html">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" ng-click="cancel()">&times;</button>
+<h3 class="modal-title">ค้นหา Payment</h3>
+</div>
+<div class="modal-body">
+<div class="row">
+<div class="col-md-12 form-inline">
+<input type="text" class="form-control" ng-model="searchPO.home" placeholder="แปลง">
+<input type="text" class="form-control" ng-model="searchPO.job" placeholder="หมวดงาน">
+<input type="text" class="form-control" ng-model="searchPO.vendor" placeholder="ผู้รับเหมา"> 
+<div class="input-group">
+<input  type="text" 
+class="form-control" 
+uib-datepicker-popup="{{popupDate.format}}" 
+ng-model="searchPO.paydate" 
+is-open="popupDate.opened" 
+datepicker-options="dateOptions" 
+ng-required="true" 
+close-text="x Close" 
+myformat
+alt-input-formats="altInputFormats" />
+<span class="input-group-btn">
+<button type="button" class="btn btn-default btn-sm" ng-click="openDatePicker()">
+<i class="glyphicon glyphicon-calendar"></i> เลือวันที่</button>
+</span>
+
+</div>
+<button type="button" ng-click="search(searchPO)" class="btn btn-primary">Search</button>
+</div>
+</div>
+<br>
+
+<table class="table-condensed table table-bordered table-hover">
+<tr>
+<th></th>
+<th>แปลง</th>
+<th>หมวดงาน</th>
+<th>รายการ</th>
+<th>ผู้รับเหมา</th>
+<th></th>
+<th></th>
+</tr>
+<tr 
+ng-repeat="po  in items.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))" 
+ng-if="items.length>0"
+>
+<td>{{$index+1}}</td>
+<td><a ng-click="selectPO(po)" class="">{{ po.code }}</a></td>
+<td>{{po.paydate|date:'dd/MM/yyyy'}}</td>
+<td>{{po.name}}</td>
+<td>{{po.price}}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td ng-if="items.length==0" colspan="4">
+<span class="text-danger">ไม่พบข้อมูล</span>
+</td>
+</tr>
+</table>
+<!--//////////////Pagination //////////////-->
+<uib-pager total-items="totalItems" ng-model="currentPage"></uib-pager>
+</div>
+<div class="modal-footer">
+<div>{{message}}</div>
+<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+</script>
+
+<article class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">
+<button type="button" class="btn btn-success btn-sm" ng-click="openModalPayment()">
+<i class="glyphicon glyphicon-plus"></i></button> รายการ Payment </h3>
+</div>
+<div class="panel-body">
+<div ng-show="selectedPO">
+<table class="table table-condensed table-bordered">
+<tr>
+<th>แปลง</th>
+<th>หมวดงาน</th>
+<th>รายการ</th>
+<th>ผู้รับเหมา</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</tr>
+<tr ng-repeat="po in selectedPO track by $index">
+<td>{{$index+1}}</td>
+<td><a ng-click="selectPO(po)" class="">{{ po.code }}</a></td>
+<td>{{po.paydate|date:'dd/MM/yyyy'}}</td>
+<td>{{po.name}}</td>
+<td>{{po.price}}</td>
+<td>
+<div class="pull-left">
+<input 
+type="number"
+class="form-control text-right" 
+ng-model="items.paymentdoc.price" 
+>
+<a href="#" ng-click="$event.preventDefault();items.paymentdoc.price=po.price">จ่ายเต็ม</a>
+</div>
+<div class="pull-right">
+{{po.price|currency:'฿'}}
+</div>
+</td>
+<td><button type="button" class="btn btn-xs btn-danger" ng-click="removePO($index)">-</button></td>
+</tr>
+</table>
+</div>
+</div>
+</article>
+
+
+
+</div>

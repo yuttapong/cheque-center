@@ -1,0 +1,31 @@
+{
+  "name": "cheque-center",
+  "authors": [
+    "yuttapong <zamoko@hotmail.com>"
+  ],
+  "description": "by angularjs",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-animate": "^1.5.3",
+    "angular-bootstrap": "^1.3.1",
+    "angular-resource": "^1.5.3",
+    "angular-route": "^1.5.3",
+    "angular-touch": "^1.5.3",
+    "angular-bindonce": "*",
+    "bootstrap-datepicker": "^1.6.1",
+    "bootstrap": "^3.3.6",
+    "ngDatepicker": "*",
+    "moment-range": "~1.0.1",
+    "allmighty-autocomplete": "*"
+  }
+}

@@ -1,0 +1,80 @@
+<div ng-include="'app/navbar/top.html'"></div>
+
+<div class="container-fluid">
+
+<p align="left">
+<a href="#{{profileId}}/cheques">เช็คทั้งหมด</a>
+</p>
+
+<h1 class="page-title">รายละเอียด: <span>{{data.cheque_no}}</span>
+  <div ng-if="data.is_cancel==1" class="pull-right label label-danger">
+    <i class="fa fa-ban"></i> ยกเลิกแล้ว</div>
+</h1>
+<div class="row">
+<div class="col-xs-12 col-sm-12 col-md-6">
+<div class="panel panel-default">
+<div class="panel-heading">
+<div class="pull-left">
+<h3 class="panel-title">เลขที่เช็ค :  {{data.cheque_no}}</h3>
+</div>
+<div class="pull-right">สถานะ :
+<span ng-if="data.cheque_status=='Y' " class="label label-success">จ่ยเงินแล้ว</span>
+<span ng-if="data.cheque_status=='N' " class="label label-danger">ยังไม่จ่าย</span>
+</div>
+<div class="clearfix"></div>
+</div>
+<div class="panel-body">
+<div class="panel-content">
+<table class="table table-striped">
+<tr><td>ID</td><td>{{data.id}}</td></tr>
+<tr><td>โครงการ</td><td>{{data.site_name}}</td></tr>
+<tr><td>สั่งจ่าย</td><td>{{data.cheque_name}}</td></tr>
+<tr><td>วันที่เช็ค</td><td>{{data.cheque_date | date:'dd/MM/yyyy'}}</td></tr>
+<tr><td>AC</td>
+<td>
+<div ng-if="data.cheque_ac=='Y' ">เข้าบัญชี</div>
+<div ng-if="data.cheque_ac=='N' ">ไม่เข้าบัญชี</div>
+</td>
+</tr>
+<tr><td>จำนวนเงิน</td><td>{{data.cheque_price|currency:'฿'}}</td></tr>
+<tr><td>ธนาคาร</td><td>{{data.bank_name}} ({{data.bank_branch}})
+<span class="l">เลขที่บัญชี่ {{data.bank_no}}</span>
+</td></tr>
+<tr><td>วันที่ทำรายการ</td><td>{{data.created_at | date:'dd/MM/yyyy'}} -  {{data.created_name}}</td></tr>
+<tr><td>แก้ไขล่าสุด</td><td>{{data.updated_at | date}} -  {{data.updated_name}}</td></tr>
+</table>
+</div>
+</div></div>
+</div>
+
+
+<div class="col-xs-12 col-sm-6 col-md-6">
+<div class="table-responsive" ng-if="records.length>0">
+<table class="table table-bordered table-condensed">
+<tr>
+<th></th>
+<th>จ่ายเพื่อ</th>
+<th>ราคา</th>
+</tr>
+<tr ng-repeat="record in records | orderBy:type:reverse">
+<td>{{$index+1}}</td>
+<td>{{record.title}}</td>
+<td>{{record.price | currency : '฿'}}</td>
+</tr>
+<tr>
+<td colspan="2" align="center">Total</td>
+<td><strong>{{totalsDetail().price | currency : '฿'}}</strong></td>
+</tr>
+</table>
+</div>
+<p><a href="app/cheque/export/{{data.bank_code}}.php?id={{data.id}}"
+  class="btn btn-info" target="_blank"><i class="fa fa-print"></i> Print</a>
+</p>
+<div ng-show="data.is_cancel" class="well">
+  <label class="control-label">หมายเหตุการยกเลิก:</label>
+ <div ng-bind="data.cancel_note"></div>
+</div>
+</div>
+</div>
+
+</div>

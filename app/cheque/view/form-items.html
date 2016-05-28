@@ -1,0 +1,88 @@
+<h3>
+    จ่ายเพื่อ
+</h3>
+
+<div class="table-responsive">
+<table class="table table-bordered table-condensed">
+<tr>
+<th></th>
+<th ng-click="type = 'title'; reverse = !reverse" width="60%">
+จ่ายเพื่อ
+</th>
+<th ng-click="type = 'price'; reverse = !reverse">
+ราคา
+</th>
+<th>
+Action
+</th>
+</tr>
+
+<tr ng-repeat="record in records | orderBy:type:reverse">
+<td>{{$index+1}}</td>
+<td>
+<input type="text" class="form-control" ng-model="record.title">
+<p class="hidden">{{record.price | currency : '฿'}}</p>
+<td>
+<input type="number" class="form-control" ng-model="record.price" 
+ ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" 
+>
+</td>
+<td>
+<a ng-click="deleteDetail($index,record)" href="javascript:void(0)"  class="btn btn-xs btn-danger">
+x
+</a>
+</td>
+</tr>
+
+<tr>
+<td colspan="2" align="center">
+<strong>รวม</strong>
+</td>
+<td>
+<strong>{{TotalsDetail().price | currency : '฿'}}</strong>
+</td>
+<td>
+</td>
+</tr>
+</table>
+
+
+    <button ng-click="undoDeleteDetail()" ng-show="history.length > 0" type="button">
+        Undo Delete
+    </button>
+
+</div>
+
+<table class="table table-bordered">
+<tr>
+<td width="65%">
+
+
+ <autocomplete ng-model="pay.title" data="groupPay" ng-keyup="getGroupPay(pay)"
+attr-placeholder="รายการจ่ายเพื่อ..."
+attr-input-class="form-control"
+ ></autocomplete>
+
+
+</td>
+<td>
+<input 
+id="search-pay-price"
+class="form-control" 
+min="0" 
+ng-model="pay.price" 
+placeholder="มูลค่า" 
+type="number"
+ ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+  step="0.01" >
+</td>
+<td width="75">
+<div class="btn-group">
+<button ng-click="addDetail(pay)" type="button" class="btn btn-sm btn-success">+</button>
+<button ng-click="resetDetail()" type="button" class="btn btn-sm btn-default">-</button>
+</div>
+</td>
+</tr>
+</table>
+
+

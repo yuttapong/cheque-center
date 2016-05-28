@@ -1,0 +1,113 @@
+
+<!-///////////////////////// PO ////////////////////////->		
+<div ng-controller="ModalPOCtrl" id="ModalPOCtrl">
+<script type="text/ng-template" id="modelSearchPO.html">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" ng-click="cancel()">&times;</button>
+<h3 class="modal-title">ค้นหา PO</h3>
+</div>
+<div class="modal-body">
+
+<div class="row">
+<div class="col-md-12 form-inline">
+<input 
+type="text" 
+class="form-control" 
+ng-model="searchPO.q" 
+placeholder="เลขที่ PO, ชื่อผู้รับ"
+ngEnter
+>
+<div class="input-group">
+<input  type="text" 
+class="form-control" 
+uib-datepicker-popup="{{popupDate.format}}" 
+ng-model="searchPO.paydate" 
+is-open="popupDate.opened" 
+datepicker-options="dateOptions" 
+ng-required="true" 
+close-text="x Close" 
+myformat
+alt-input-formats="altInputFormats" />
+<span class="input-group-btn">
+<button type="button" class="btn btn-default btn-sm" ng-click="openDatePicker()">
+<i class="glyphicon glyphicon-calendar"></i> เลือวันที่</button>
+</span>
+<div ng-show="false">
+{{dt = (searchPO.paydate | date:'yyyy-MMMM-dd') }}
+</div> 
+</div>
+<button type="button" ng-click="search(searchPO)" class="btn btn-primary">Search</button>
+</div>
+</div>
+<br>
+<table class="table-condensed table table-bordered table-hover list-po">
+<tr><td></td><th>Code</th><th>วันที่</th><th>Name</th><th>Price</th></tr>
+<tr ng-repeat="po  in items.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))" ng-if="items.length>0">
+<td>{{$index+1}}</td>
+<td><a ng-click="selectPO(po)" class="">{{ po.code }}</a></td>
+<td>{{po.paydate|date:'dd-MM-yyyy'}}</td>
+<td>{{po.name}}</td>
+<td>{{po.price}}</td>
+</tr>
+<tr><td ng-if="items.length==0" colspan="4"><span class="text-danger">ไม่พบข้อมูล</span></td></tr>
+</table>
+
+<uib-pager total-items="totalItems" ng-model="currentPage"></uib-pager>
+
+</div>
+<div class="modal-footer">
+<div>{{message}}</div>
+<button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+<button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
+
+</script>
+
+  <!--////////////////// Show PO /////////////////////////////-->
+<article class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">
+<button type="button" class="btn btn-success btn-sm" ng-click="openModalPO()"><i class="glyphicon glyphicon-plus"></i>
+</button> รายการ PO </h3></div>
+<div class="panel-body">
+<div ng-show="selectedPO">
+<table class="table table-condensed table-bordered">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Price</th>
+<th></th>
+</tr>
+<tr ng-repeat="po in selectedPO track by $index">
+<td>{{po.code}}</td>
+<td>{{po.name}}</td>
+<td>
+<div class="pull-left">
+<input 
+type="number"
+class="form-control text-right" 
+ng-model="items.po.price" 
+>
+<input type="text" ng-model="items.po.id" ng-value="po.id">
+</div>
+<div class="pull-right">
+<a href="#" ng-click="$event.preventDefault();items.po.price=po.price">จ่ายเต็ม</a>
+{{po.price|currency:'฿'}}
+</div>
+</td>
+<td><button type="button" class="btn btn-xs btn-danger" ng-click="removePO($index)">-</button></td>
+</tr>
+<tr>
+  <td colspan="2"></td>
+  <td>{{po.price}}</td>
+</tr>
+</table>
+
+</div>
+</div>
+</article>
+
+
+
+</div>
+{{items.po}}

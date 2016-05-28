@@ -1,0 +1,311 @@
+<style type="text/css">
+  input .ng-invalid {color:red; border: solid 1px red;}
+
+
+</style>
+
+
+<form class="form-horizontal" name="formCheque" accept="" method="post" ng-submit="saveChuque(alldata)">
+<p class="btn-group">
+<a href="#cheques"  class="btn btn-default"><i class="fa fa-arrow-left"></i> Back</a>
+<input type="submit" class="btn btn-primary" value="Submit">
+<input type="button" class="btn btn-default"  ng-click="resetForm()" value="Reset">
+</p>
+
+<div class="row">
+<div class="col-md-6">
+<div class="wells">
+<p>
+  <h3 ng-if="id_cheque>0">ID: {{id_cheque}}</h3> 
+  <span>ผู้ทำรายการ : {{username}}</span>
+  </p>
+<!-- Select Bank -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="id_bank">ธนาคาร</label>
+  <div class="col-md-8">
+  <div class="input-group">
+    <select 
+    id="bank_id" 
+    name="bank_id" 
+    class="form-control"   
+    ng-model="dropdownBank"
+    ng-options="bank.BankID as bank.BankName   for bank in banks track by bank.BankID" 
+    >
+    </select>
+    <span class="input-group-btn">
+<button class="btn btn-default" type="button" ng-click="setBank(dropdownBank)">เลือก</button>
+</span>
+    </div>
+  </div>
+</div>
+
+{{dropdownBank}}
+
+
+
+
+<!-- Text Bank Name-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="textinput">ชื่อธนาคาร</label>  
+  <div class="col-md-8">
+  <div class="input-group">
+  <span class="form-group-btn">
+   <input type="hidden" class="form-control" ng-model="dataform.bank_id" readonly placeholder="Bank ID">
+  <input type="text" class="form-control" ng-model="dataform.bank_code"  placeholder="Bank Code" required>
+  </span>
+  <input id="bank_name" name="bank_name" type="text"  ng-model="dataform.bank_name"
+  ng-min="2"
+  placeholder="ชื่อธนาคาร" 
+  class="form-control input-md" required readonly>
+  </div>
+  <span class="text-danger" ng-show="formCheque.$error.required && ! formCheque.bank_name.$pristine">ระบุชื่อธนาคาร</span>
+  <span class="text-danger"  ng-show="formCheque.$error.bank_name">ชื่อธนาคารไม่ถูกต้อง</span>
+  </div>
+</div>
+
+
+
+<!-- Text Bank Branch-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="bank_branch">สาขา</label>  
+  <div class="col-md-8">
+  <input id="bank_branch" name="bank_branch" ng-model="dataform.bank_branch" type="text" placeholder="สาขา" class="form-control input-md">
+  </div>
+</div>
+
+
+<!-- Text bank no-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="bank_no">เลขที่บัญชี</label>  
+  <div class="col-md-8">
+  <input id="bank_no" name="bank_no" type="text" ng-model="dataform.bank_no" placeholder="เลขที่บัญชี" class="form-control input-md">
+  </div>
+</div>
+
+
+<!-- Text cheque no-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="cheque_no">เลขที่เช็ค</label>  
+  <div class="col-md-8">
+  <input id="cheque_no" name="cheque_no" 
+  ng-model="dataform.cheque_no" type="text" placeholder="เลขที่เช็ค" class="form-control input-md" required>
+      <span class="text-danger" 
+      ng-show="formCheque.$error.required && ! formCheque.cheque_no.$pristine">
+      ระบุเลขที่เช็ค</span>
+  </div>
+</div>
+
+<!-- Text cheque date-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="cheque_no">วันที่จ่าย</label>  
+  <div class="col-md-8">
+    <ng-datepicker 
+    ng-model="dataform.cheque_date" 
+    class=""
+    locale="th" 
+    format="YYYY-MM-DD" 
+    view-format="DD/MM/YYYY">
+    </ng-datepicker>
+    <span ng-bind="ctrl.date2" style="display: block; margin-top: 5px;"></span>
+<span class="text-danger" 
+   ng-show="formCheque.$error.required && ! formCheque.cheque_no.$pristine">
+วันที่จ่ายเช็ค</span>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- Text Cheque Name Pay-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="cheque_name_pay">เช็คสั่งจ่าย</label>  
+  <div class="col-md-8">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="setPayCash()">เงินสด!</button>
+      </span>
+      <input type="text" 
+      class="form-control" 
+      placeholder="" 
+      name="cheque_name" 
+      ng-model="dataform.cheque_name"
+      required
+      >
+    </div><!-- /input-group -->
+            <span class="text-danger" 
+      ng-show="formCheque.$error.required && ! formCheque.cheque_name.$pristine">
+      ระบุเช็คสั่งจ่าย</span>
+  </div>
+</div>
+
+
+<div class="">
+
+<!-- Select Vat -->
+<div class="form-group">
+<label class="col-md-4 control-label" for="vat">ภาษีมูลค่าเพิ่ม</label>
+<div class="col-md-8">
+<div class="input-group">
+<input 
+type="number" 
+id="vat" 
+name="vat" 
+class="form-control"   
+ng-model="dataform.feeVat"
+ng-change="calPrice(dataform)"
+step="1" 
+required
+>
+<span class="input-group-btn">
+<button class="btn btn-default" type="button">% = </button>
+</span>
+<input type="number" ng-model="dataform.totalVat" 
+class="form-control"
+step="0.01" 
+ >
+</div>
+<span 
+class="text-danger" 
+ng-show="formCheque.$error.required && ! formCheque.vat.$pristine">
+ระบุ ภาษีมูลค่าเพิ่ม</span>
+</div>
+</div>
+
+
+<!-- Select Guarantee -->
+<div class="form-group">
+<label class="col-md-4 control-label" for="guarantee">หักค่ประกัน</label>
+<div class="col-md-8">
+<div class="input-group">
+<input type="number" 
+id="guarantee" 
+name="guarantee" 
+class="form-control"   
+ng-model="dataform.feeGuarantee"
+required
+ng-change="calPrice(dataform)"
+>
+<span class="input-group-btn">
+<button class="btn btn-default" type="button">% = </button>
+</span>
+<input type="number" ng-model="dataform.totalGuarantee" class="form-control">
+</div>
+<span class="text-danger" 
+ng-show="formCheque.$error.required && ! formCheque.guarantee.$pristine">
+ระบุ หักค่าประกันผลงาน</span>
+</div>
+</div>
+
+
+<!-- Select Tax -->
+<div class="form-group">
+<label class="col-md-4 control-label" for="tax">หัก ณ ที่จ่าย</label>
+<div class="col-md-8">
+<div class="input-group">
+<input 
+type="number" 
+id="tax" 
+name="tax" 
+class="form-control"   
+ng-model="dataform.feeTax"
+required
+ng-change="calPrice(dataform)"
+>
+<span class="input-group-btn">
+<button class="btn btn-default" type="button">% = </button>
+</span>
+<input type="number" ng-model="dataform.totalTax" class="form-control">
+</div>
+<span class="text-danger" 
+ng-show="formCheque.$error.required && ! formCheque.tax.$pristine">
+ระบุหัก ณ ที่จ่าย</span>
+</div>
+</div>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div ng-include="'cheque/view/form-detail.html'"></div>
+
+
+<!-- Text input-->
+<div class="form-group">
+<label class="col-md-4 control-label" for="cheque_price">จำนวนเงิน(ก่อนหักภาษี)</label>  
+<div class="col-md-8">
+<input id="cheque_price" 
+name="cheque_price" 
+ng-model="dataform.cheque_price" 
+type="number" 
+placeholder="จำนวนเงิน" 
+class="form-control input-md" 
+required  
+ng-change="calPrice(dataform)"
+ng-blur="calPrice(dataform)"
+>
+<span class="text-danger" 
+ng-show="formCheque.$error.required && ! formCheque.cheque_price.$pristine">
+ระบุจำนวนเงินก่อนหัก</span>
+</div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+<label class="col-md-4 control-label" for="cheque_price">รวมยอดเงิน</label>  
+<div class="col-md-8">
+<input id="amount"  name="amount" 
+ng-model="dataform.amount" 
+type="number" 
+placeholder="รวมยอดเงิน" 
+class="form-control input-md" 
+required  
+>
+<span class="text-danger" 
+ng-show="formCheque.$error.required && ! formCheque.cheque_price.$pristine">
+รวมยอดเงิน</span>
+</div>
+</div>
+
+<!--/////////////// Payment /////////////-->
+<!--<div ng-include="'cheque/view/form-po.html'"></div>-->
+<!--/////////////// Purchase  /////////////-->
+<!--<div ng-include="'cheque/view/form-payment.html'"></div>-->
+
+</div>
+</div>
+</form>	
+
+
+<div class="list-group">
+  <div class="list-group-item" ng-repeat="data in alldata track by $index">
+    <p>bank_id : {{data.bank_id}}</p>
+    <p>ธนาคาร : {{data.bank_code}} - {{data.bank_name}}</p>
+    <p>สาขา : {{data.bank_branch}}</p>
+    <p>เลขที่บัญชี : {{data.bank_no}}</p>
+    <p>เลขที่เช็ค : {{data.cheque_no}}</p>
+    <p>วันที่จ่าย : {{data.cheque_date}}</p>
+    <p>เช็คสั่งจ่าย : {{data.cheque_name}}</p>
+    <p>เช็คมูลค่า : {{data.cheque_price|currency:'฿'}}</p>
+    <p>หักประกันผลงาน : {{data.feeGuarantee}}% = {{data.totalGuarantee|currency:'฿'}}</p>
+    <p>หัก ณ ที่จ่าย : {{data.feeTax}}% = {{data.totalTax|currency:'฿'}}</p>
+    <p>ภาษีมูลค่าเพิ่ม : {{data.feeVat}}% = {{data.totalVat|currency:'฿'}}</p>
+  </div>
+</div>
+
+
+
+
+<style type="text/css">
+  #ModalPOCtrl .list-po td{
+    font-size: 13px;
+  }
+
+</style>

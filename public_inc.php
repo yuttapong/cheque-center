@@ -7,9 +7,9 @@ date_default_timezone_set('Asia/Bangkok') ;
 
 /*
 define('CHEQUE_DB_HOST', 'localhost');
-define('CHEQUE_DB_USER', 'siricenter_app');
-define('CHEQUE_DB_PWD', 'oco0XhU2');
-define('CHEQUE_DB_NAME', 'siricenter_inventorymodish');
+define('CHEQUE_DB_USER', 'user');
+define('CHEQUE_DB_PWD', 'password');
+define('CHEQUE_DB_NAME', 'db');
 */
 
 
